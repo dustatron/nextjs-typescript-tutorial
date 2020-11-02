@@ -1,5 +1,6 @@
 import { ApolloServer, gql, IResolvers } from "apollo-server-micro";
 import mysql from "serverless-mysql";
+import { OkPacket } from "mysql";
 
 const typeDefs = gql`
   enum TaskStatus {
@@ -60,25 +61,34 @@ type TasksDbQueryResult = TaskDbRow[];
 
 const resolvers: IResolvers<any, ApolloContext> = {
   Query: {
-    async tasks(parent, args: { status?: TaskStatus }, context): Promise<Task[]> {
+    async tasks(parent, args: { status?: TaskStatus }, context) {
       const { status } = args;
       let query = "SELECT id, title, task_status FROM task";
-      const queryParams: String[] = [];
+      const queryParams: string[] = [];
       if (status) {
-        query + " WHERE task_status = ?";
+        query += " WHERE task_status = ?";
         queryParams.push(status);
       }
-      const task = await context.db.query<TasksDbQueryResult>(query, [queryParams]);
+      const tasks = await context.db.query<TasksDbQueryResult>(query, queryParams);
       await db.end();
-      return task.map(({ id, title, task_status }) => ({ id, title, status: task_status }));
+      return tasks.map(({ id, title, task_status }) => ({
+        id,
+        title,
+        status: task_status,
+      }));
     },
     task(parent, args, context) {
       return null;
     },
   },
   Mutation: {
-    createTask(parent, args: { input: { title: string } }, context): Promise<Task> {
-      return null;
+    async createTask(parent, args: { input: { title: string } }, context): Promise<Task> {
+      const result = await context.db.query<OkPacket>("INSERT INTO task (title, task_status) VALUES(?, ?)", [args.input.title, TaskStatus.active]);
+      return {
+        id: result.insertId,
+        title: args.input.title,
+        status: TaskStatus.active,
+      };
     },
     updateTask(parent, args, context) {
       return null;
