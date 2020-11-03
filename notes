@@ -1,0 +1,2 @@
+Migration command
+docker exec -i nextjs-typescript-tutorial_mysql_1 sh -c 'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE' < db/schema.sql
