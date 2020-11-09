@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
@@ -9,8 +9,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
 
 export enum TaskStatus {
@@ -72,12 +70,6 @@ export type MutationUpdateTaskArgs = {
 export type MutationDeleteTaskArgs = {
   id: Scalars['Int'];
 };
-
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
-
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -166,8 +158,6 @@ export type ResolversTypes = ResolversObject<{
   UpdateTaskInput: UpdateTaskInput;
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
-  CacheControlScope: CacheControlScope;
-  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
@@ -180,7 +170,6 @@ export type ResolversParentTypes = ResolversObject<{
   UpdateTaskInput: UpdateTaskInput;
   Query: {};
   Mutation: {};
-  Upload: Scalars['Upload'];
   Boolean: Scalars['Boolean'];
 }>;
 
@@ -202,15 +191,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationDeleteTaskArgs, 'id'>>;
 }>;
 
-export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
-  name: 'Upload';
-}
-
 export type Resolvers<ContextType = any> = ResolversObject<{
   Task?: TaskResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  Upload?: GraphQLScalarType;
 }>;
 
 
